@@ -1,6 +1,6 @@
 const LoadingSpinner = ({
   size = 'md',
-  color = 'border-t-blue-600',
+  color = 'border-t-blue-500',
   className = ''
 }) => {
   const sizeClasses = {

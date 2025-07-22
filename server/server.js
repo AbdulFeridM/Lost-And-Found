@@ -4,22 +4,18 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-const connectDB = require('./config/database'); // ✅ make sure this file exports a function
+const connectDB = require('./config/database'); 
 const authRoutes = require('./routes/auth');
 const itemRoutes = require('./routes/items');
+const statsRoutes = require('./routes/stats');
+const userRoutes = require('./routes/users');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// =============================
-// Connect to MongoDB
-// =============================
-connectDB(); // 🔁 Fix the export if this line throws an error
+connectDB();
 
-// =============================
-// Middleware Setup
-// =============================
-app.use(helmet()); // Security headers
+app.use(helmet()); 
 
 app.use(cors({
   origin: ['http://localhost:5173', 'http://localhost:3000'],
@@ -42,6 +38,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // =============================
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
+app.use('/api/stats',statsRoutes);
+app.use('/api/users',userRoutes)
 
 // Health Check Route
 app.get('/api/health', (req, res) => {

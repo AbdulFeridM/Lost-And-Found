@@ -1,36 +1,49 @@
-import React from 'react';
-import { Package, Plus } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import MetricsCard from './_components/metrics-card';
+import MetricsChart from './_components/status-charts';
+import LatestItemsTable from './_components/latest-item-table';
+import LatestReportTable from './_components/latest-report-table';
+import { useStats } from '../contexts/statsContext';
+import { useItems } from '../contexts/ItemsContext';
+import Spinner from '../components/spinner';
 
 const Dashboard = () => {
+  const { stats, loadingStats, fetchStats } = useStats();
+  const { loading, getMyItems, myItems, getLatestItems, latestItems } = useItems();
+
+  useEffect(() => {
+    fetchStats();
+    if (!loading && myItems.length === 0) {
+      getMyItems();
+      getLatestItems();
+    }
+  }, []);
+
+  if (loadingStats && loading) return <Spinner />;
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">
-            Manage your posted items and claims
-          </p>
-        </div>
-        <Link
-          to="/post-item"
-          className="btn btn-primary inline-flex items-center"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Post New Item
-        </Link>
+    <div className="w-full min-h-screen px-4 sm:px-6 md:px-8 py-6 flex flex-col gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {stats.map((stat, index) => (
+          <MetricsCard
+            key={index}
+            type={stat.type}
+            count={stat.count}
+            label={stat.label}
+          />
+        ))}
       </div>
 
-      {/* Empty State */}
-      <div className="text-center py-12">
-        <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No items posted yet</h3>
-        <p className="text-gray-600 mb-6">Start by posting your first lost or found item.</p>
-        <Link to="/post-item" className="btn btn-primary">
-          Post an Item
-        </Link>
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="w-full lg:w-1/2 min-h-[300px] hidden  md:block">
+          <MetricsChart data={stats} />
+        </div>
+        <div className="w-full lg:w-1/2">
+          <LatestItemsTable latestItems={latestItems?.slice(0, 3)} />
+        </div>
       </div>
+
+      <LatestReportTable myItems={myItems?.slice(0, 5)} />
     </div>
   );
 };

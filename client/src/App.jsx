@@ -1,16 +1,10 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
-import Layout from './components/Layout/Layout';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Dashboard from './pages/Dashboard';
-import PostItem from './pages/PostItem';
-import AdminPanel from './pages/AdminPanel';
 import LoadingSpinner from './components/UI/LoadingSpinner';
+import AppRoutes from './routes';
 
-function App() {
+const App = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -21,23 +15,7 @@ function App() {
     );
   }
 
-  return (
-    <Routes>
-      {/* Public routes */}
-      <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-      <Route path="/register" element={!user ? <Register /> : <Navigate to="/" />} />
-      
-      {/* Protected routes */}
-      <Route path="/" element={user ? <Layout /> : <Navigate to="/login" />}>
-        <Route index element={<Home />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="post-item" element={<PostItem />} />
-        <Route path="admin" element={
-          user?.role === 'admin' ? <AdminPanel /> : <Navigate to="/" />
-        } />
-      </Route>
-    </Routes>
-  );
-}
+  return <Routes>{AppRoutes(user)}</Routes>;
+};
 
 export default App;

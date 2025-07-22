@@ -10,7 +10,9 @@ const {
   getMyItems,
   getMyClaims,
   approveItem,
-  rejectItem
+  getItemById,
+  rejectItem,
+  getAllItems
 } = require('../controllers/itemController');
 
 const router = express.Router();
@@ -31,12 +33,14 @@ router.get('/', getItems);
 router.post('/', auth, itemValidation, createItem);
 router.put('/:id', auth, updateItem);
 router.delete('/:id', auth, deleteItem);
+router.get('/item/:id', auth, getItemById);
 router.post('/:id/claim', auth, claimItem);
 router.get('/my-items', auth, getMyItems);
 router.get('/my-claims', auth, getMyClaims);
+router.get('/all', auth, getItems); 
 
 // Admin routes
-router.post('/:id/approve', adminAuth, approveItem);
-router.post('/:id/reject', adminAuth, rejectItem);
+router.put('/:id/approve', adminAuth, approveItem);
+router.put('/:id/reject', adminAuth, rejectItem);
 
 module.exports = router;

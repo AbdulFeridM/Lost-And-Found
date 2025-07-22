@@ -1,11 +1,19 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const Item = require('../models/Item');
+require('dotenv').config();
 
 const seedData = async () => {
+  const url = process.env.MONGODB_ATLAS_URI || process.env.MONGODB_URI;
+  console.log('🔗 Connecting to MongoDB...', url);
+  if (!url) {
+    console.error('❌ MongoDB URI not found in environment variables');
+    process.exit(1);
+  }
   try {
+
     // Connect to database
-    await mongoose.connect('mongodb://localhost:27017/campus-lost-found', {
+    await mongoose.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

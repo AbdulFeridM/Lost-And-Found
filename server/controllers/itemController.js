@@ -7,7 +7,6 @@ const getItems = async (req, res) => {
     
     let query = {};
     
-    // Build search query (make sure you have text indexes on Item collection)
     if (search) {
       query.$text = { $search: search };
     }
@@ -19,12 +18,15 @@ const getItems = async (req, res) => {
     if (type && type !== 'all') {
       query.type = type;
     }
-    
-    if (status && status !== 'all') {
-      query.status = status;
+    console.log(req.user, 'User role:', req.user?.role);
+    if (req.user && req.user.role === 'admin') {
+      if (status && status !== 'all') {
+        query.status = status;
+      }
     } else {
-      // Default to only approved items if not admin
-      if (!req.user || req.user.role !== 'admin') {
+      if (status && status !== 'all') {
+        query.status = status;
+      } else {
         query.status = 'approved';
       }
     }
@@ -40,7 +42,7 @@ const getItems = async (req, res) => {
       .skip((parsedPage - 1) * parsedLimit);
 
     const total = await Item.countDocuments(query);
-
+    console.log('Total items:', total, 'Page:', parsedPage, 'Limit:', parsedLimit, items);
     res.json({
       items,
       totalPages: Math.ceil(total / parsedLimit),
@@ -53,6 +55,7 @@ const getItems = async (req, res) => {
   }
 };
 
+
 // Create new item
 const createItem = async (req, res) => {
   try {
@@ -63,15 +66,17 @@ const createItem = async (req, res) => {
       return res.status(400).json({ message: 'Missing required fields' });
     }
     
+
+
     const item = new Item({
       title,
       description,
-      category,
+      category:category.toLowerCase(),
       type,
       location,
       contactInfo,
       postedBy: req.user.id,
-      status: 'approved' // You can change logic here if you want manual approval
+      status: 'pending'
     });
 
     await item.save();
@@ -91,6 +96,7 @@ const createItem = async (req, res) => {
 const updateItem = async (req, res) => {
   try {
     const { id } = req.params;
+  
 
     const item = await Item.findById(id);
     if (!item) {
@@ -102,10 +108,14 @@ const updateItem = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized' });
     }
 
+    
+
     const updatedItem = await Item.findByIdAndUpdate(id, req.body, { new: true })
       .populate('postedBy', 'name email')
       .populate('claimedBy', 'name email');
 
+      console.log('Updated item:', updatedItem);
+ jn 
     res.json({
       message: 'Item updated successfully',
       item: updatedItem
@@ -178,8 +188,9 @@ const claimItem = async (req, res) => {
 
 // Get user's posted items
 const getMyItems = async (req, res) => {
+  const userId = req.query.userId || req.user.id;
   try {
-    const items = await Item.find({ postedBy: req.user.id })
+    const items = await Item.find({ postedBy: userId })
       .populate('claimedBy', 'name email')
       .sort({ createdAt: -1 });
 
@@ -255,6 +266,29 @@ const rejectItem = async (req, res) => {
   }
 };
 
+const getItemById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: 'Item ID is required' });
+    }
+    const item = await Item.findById(id)
+      .populate('postedBy', 'name email')
+      .populate('claimedBy', 'name email');
+
+    if (!item) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    res.json(item);
+  } catch (error) {
+    console.error('Get item by ID error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
 module.exports = {
   getItems,
   createItem,
@@ -265,4 +299,5 @@ module.exports = {
   getMyClaims,
   approveItem,
   rejectItem,
+  getItemById,
 };

@@ -36,7 +36,7 @@ const itemSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['pending', 'approved', 'rejected', 'claimed'],
-    default: 'approved' // Auto-approve for demo
+    default: 'pending' 
   },
   postedBy: {
     type: mongoose.Schema.Types.ObjectId,
