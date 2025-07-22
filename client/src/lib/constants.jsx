@@ -9,3 +9,5 @@ export const categories = [
     'Parking Lot A', 'Parking Lot B', 'Dormitory', 'Lecture Hall',
     'Computer Lab', 'Auditorium', 'Other'
   ];
+
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
