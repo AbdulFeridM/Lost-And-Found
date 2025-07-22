@@ -18,8 +18,6 @@ export const statsController = async (req, res) => {
         Item.countDocuments({ type: 'found', postedBy: userId }),
         Item.countDocuments({ status: 'claimed', claimedBy: userId }),
       ]);
-
-      console.log('User Stats:', { userLost, userFound, userClaimed, userId });
   
       userStats = { userLost, userFound, userClaimed , userId};
     }

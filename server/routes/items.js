@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { auth, adminAuth } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 const {
   getItems,
   createItem,
@@ -30,7 +31,7 @@ const itemValidation = [
 router.get('/', getItems);
 
 // Protected routes
-router.post('/', auth, itemValidation, createItem);
+router.post('/', auth, itemValidation,upload.single('image'),  createItem);
 router.put('/:id', auth, updateItem);
 router.delete('/:id', auth, deleteItem);
 router.get('/item/:id', auth, getItemById);

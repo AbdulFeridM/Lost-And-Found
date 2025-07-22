@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 import { useAuth } from './AuthContext';
 import api from '../config/api';
 import toast from 'react-hot-toast';
+import { fileToBase64 } from '../lib/utils';
 
 const ItemsContext = createContext();
 
@@ -24,7 +25,7 @@ export const ItemsProvider = ({ children }) => {
   });
 
   const { user } = useAuth();
-  console.log('User in ItemsContext:', user);
+
 
   const fetchItems = async (filters = {}, page = 1) => {
     if (!user) return;
@@ -43,6 +44,7 @@ export const ItemsProvider = ({ children }) => {
       queryParams.append('limit', pagination.limit);
 
       const res = await api.get(`${path}?${queryParams.toString()}`);
+      console.log('Fetched items:', res);
       const { items, currentPage, totalPages, total } = res;
 
       setItems(items);
@@ -62,22 +64,26 @@ export const ItemsProvider = ({ children }) => {
 
   const addItem = async (itemData) => {
     try {
-      console.log('Adding item:', itemData);
+      
+     const { item, message } =   await api.post('/items', itemData);
 
-
-      const  {message, item} = await api.post('/items', itemData);
-      toast.success(message)
-      if (item.status === 'approved' || user.role === 'admin') {
+  
+  
+      if (item.status === 'approved' || user?.role === 'admin') {
         setItems((prev) => [item, ...prev]);
       }
-
-      toast.success('Item posted successfully!');
+  
+      toast.success(message || 'Item posted successfully!');
       return { success: true };
     } catch (error) {
-      toast.error(error.message || 'Failed to post item');
+      console.error('Upload error:', error.response?.data || error.message);
+      toast.error(
+        error.response?.data?.message || error.message || 'Failed to post item'
+      );
       return { success: false, message: error.message };
     }
   };
+  
 
   const claimItem = async (id) => {
     try {
@@ -105,7 +111,7 @@ export const ItemsProvider = ({ children }) => {
         console.error('User ID is not available');
         return;
       }
-      console.log('Fetching my items for user ID:', user.id);
+      
       const response = await api.get('/items/my-items?userId=' + user.id);
       setMyItems(response.items || []);
     } catch (error) {
@@ -130,7 +136,7 @@ export const ItemsProvider = ({ children }) => {
   }
 
   const getItemById = async (id) => {
-    console.log('Fetching item by ID:', id);
+   
     const item = await api.get(`/items/item/${id}`);
     return item;
   };

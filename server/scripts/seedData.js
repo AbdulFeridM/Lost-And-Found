@@ -5,7 +5,6 @@ require('dotenv').config();
 
 const seedData = async () => {
   const url = process.env.MONGODB_ATLAS_URI || process.env.MONGODB_URI;
-  console.log('🔗 Connecting to MongoDB...', url);
   if (!url) {
     console.error('❌ MongoDB URI not found in environment variables');
     process.exit(1);
@@ -97,11 +96,6 @@ const seedData = async () => {
     ];
 
     await Item.insertMany(demoItems);
-
-    console.log('Demo data seeded successfully!');
-    console.log('Demo accounts:');
-    console.log('Student: user@student.edu / password123');
-    console.log('Admin: admin@campus.edu / password123');
 
     process.exit(0);
   } catch (error) {

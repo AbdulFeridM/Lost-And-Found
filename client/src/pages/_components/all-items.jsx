@@ -78,15 +78,15 @@ const PaginatedItemsTable = ({ filters = {} }) => {
                 </td>
               </tr>
             ) : (
-              items.map((item) => (
+              items?.map((item) => (
                 <tr
-                  key={item._id}
+                  key={item?._id}
                   className="border-t hover:bg-gray-50 transition"
                 >
                   <td className="px-3 py-2 md:px-4 md:py-3">{item?.title}</td>
                   <td className="hidden md:table-cell px-4 py-3">{item?.category}</td>
                   <td className="hidden md:table-cell px-4 py-3">{item?.type}</td>
-                  <td className="hidden md:table-cell px-4 py-3 capitalize">{item.status}</td>
+                  <td className="hidden md:table-cell px-4 py-3 capitalize">{item?.status}</td>
                   <td className="hidden md:table-cell px-4 py-3">{item?.postedBy?.name || 'N/A'}</td>
                   {isAdmin && (
                     <td className="px-3 py-2 md:px-4 md:py-3">
@@ -98,17 +98,17 @@ const PaginatedItemsTable = ({ filters = {} }) => {
                         >
                           <Trash className="w-5 h-5 opacity-70" />
                         </button>
-                        {item.status === 'pending' && (
+                        {item?.status === 'pending' && (
                           <>
                             <button
-                              onClick={() => handleApprove(item._id)}
+                              onClick={() => handleApprove(item?._id)}
                               className="text-green-500 px-2 py-1 rounded hover:text-green-600 transition"
                               title="Approve"
                             >
                               <Check className="w-4 h-4" />
                             </button>
                             <button
-                              onClick={() => handleReject(item._id)}
+                              onClick={() => handleReject(item?._id)}
                               className="text-yellow-500 px-2 py-1 rounded hover:text-yellow-600 transition"
                               title="Reject"
                             >
@@ -126,9 +126,9 @@ const PaginatedItemsTable = ({ filters = {} }) => {
         </table>
       </div>
 
-      {pagination.totalPages > 1 && (
+      {pagination?.totalPages > 1 && (
         <div className="flex justify-center mt-6 gap-2">
-          {Array.from({ length: pagination.totalPages }, (_, i) => (
+          {Array?.from({ length: pagination?.totalPages }, (_, i) => (
             <button
               key={i + 1}
               onClick={() => handlePageChange(i + 1)}

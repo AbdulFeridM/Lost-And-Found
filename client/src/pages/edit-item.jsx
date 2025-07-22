@@ -26,9 +26,9 @@ const EditItem = () => {
   useEffect(() => {
     const loadItem = async () => {
       try {
-        console.log('Loading item with ID:', id);
+        
         const item = await getItemById(id);
-        console.log('Loaded item:', item);
+      
         if (!item) {
           toast.error('Item not found');
           navigate('/dashboard');

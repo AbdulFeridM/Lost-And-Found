@@ -4,6 +4,7 @@ import { useItems } from '../contexts/ItemsContext';
 import { X, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { categories, locations } from '../lib/constants';
+import { fileToBase64 } from '../lib/utils';
 
 const PostItem = () => {
   const [formData, setFormData] = useState({
@@ -41,14 +42,31 @@ const PostItem = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
-      const result = await addItem(formData);
+      let base64Image = null;
+      if (formData.image) {
+        base64Image = await fileToBase64(formData.image);
+      }
+  
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        type: formData.type,
+        category: formData.category,
+        location: formData.location,
+        date: formData.date,
+        image: base64Image,
+      };
+  
+      const result = await addItem(payload);
+  
       if (result.success) {
         navigate('/dashboard');
       }
     } catch (error) {
       console.error('Error posting item:', error);
+      toast.error('Failed to post item');
     } finally {
       setLoading(false);
     }
@@ -179,7 +197,7 @@ const PostItem = () => {
           {imagePreview ? (
             <div className="relative inline-block">
               <img
-                src={imagePreview}
+                src={imagePreview || '/place-holder.jpg'}
                 alt="Preview"
                 className="w-full max-w-sm h-48 object-cover rounded-xl border border-gray-300"
               />

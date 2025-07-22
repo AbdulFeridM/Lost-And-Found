@@ -1,4 +1,6 @@
 const Item = require('../models/Item');
+const cloudinary = require('../lib/config');
+const fs = require('fs');
 
 // Get all items with filters
 const getItems = async (req, res) => {
@@ -18,7 +20,7 @@ const getItems = async (req, res) => {
     if (type && type !== 'all') {
       query.type = type;
     }
-    console.log(req.user, 'User role:', req.user?.role);
+   
     if (req.user && req.user.role === 'admin') {
       if (status && status !== 'all') {
         query.status = status;
@@ -42,7 +44,7 @@ const getItems = async (req, res) => {
       .skip((parsedPage - 1) * parsedLimit);
 
     const total = await Item.countDocuments(query);
-    console.log('Total items:', total, 'Page:', parsedPage, 'Limit:', parsedLimit, items);
+  
     res.json({
       items,
       totalPages: Math.ceil(total / parsedLimit),
@@ -59,24 +61,34 @@ const getItems = async (req, res) => {
 // Create new item
 const createItem = async (req, res) => {
   try {
-    const { title, description, category, type, location, contactInfo } = req.body;
+    const { title, description, category, type, location, contactInfo, image } = req.body;
 
-    // Validate required fields (optional but recommended)
     if (!title || !description || !category || !type) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
-    
 
+    let imageUrl = null;
+
+    // Upload image to Cloudinary if provided
+    if (image) {
+      const result = await cloudinary.uploader.upload(image, {
+        folder: 'items',
+      });
+      console.log('Cloudinary upload result:', result);
+
+      imageUrl = result.secure_url;
+    }
 
     const item = new Item({
       title,
       description,
-      category:category.toLowerCase(),
+      category: category.toLowerCase(),
       type,
       location,
       contactInfo,
+      images: imageUrl ? [imageUrl] : [],
       postedBy: req.user.id,
-      status: 'pending'
+      status: 'pending',
     });
 
     await item.save();
@@ -84,7 +96,7 @@ const createItem = async (req, res) => {
 
     res.status(201).json({
       message: 'Item posted successfully',
-      item
+      item,
     });
   } catch (error) {
     console.error('Create item error:', error);
@@ -114,7 +126,6 @@ const updateItem = async (req, res) => {
       .populate('postedBy', 'name email')
       .populate('claimedBy', 'name email');
 
-      console.log('Updated item:', updatedItem);
  jn 
     res.json({
       message: 'Item updated successfully',

@@ -25,7 +25,7 @@ const Home = () => {
 
   const handleFilterChange = (key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
-    setCurrentPage(1); // Reset to first page on filter change
+    setCurrentPage(1); 
   };
 
   const clearFilters = () => {
@@ -43,7 +43,6 @@ const Home = () => {
       setCurrentPage(page);
     }
   };
-  console.log('Current Page:', currentPage, items);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
