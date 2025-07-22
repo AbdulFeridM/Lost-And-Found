@@ -27,7 +27,7 @@ const MetricsChart = ({ data }) => {
     color: colors[index % colors.length],
   }));
 
-  // Responsive bar size based on window width
+  
   const getBarSize = () => {
     if (window.innerWidth < 480) return 40;
     if (window.innerWidth < 768) return 60;

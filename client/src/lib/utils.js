@@ -27,7 +27,6 @@ export const toFormData = (data = {}, fileFieldName = 'image', file = null) => {
   return formData;
 };
 
-// utils/fileToBase64.js
 
 export const fileToBase64 = (file) => {
   return new Promise((resolve, reject) => {

@@ -125,14 +125,14 @@ const LatestItemsTable = ({ latestItems = [] }) => {
                     <button
                       className="text-green-600 hover:text-green-800"
                       title="Approve"
-                      // Add your approve handler here
+                      
                     >
                       <CheckCircle size={20} />
                     </button>
                     <button
                       className="text-yellow-600 hover:text-yellow-800"
                       title="Reject"
-                      // Add your reject handler here
+                     
                     >
                       <XCircle size={20} />
                     </button>

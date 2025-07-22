@@ -117,7 +117,7 @@ const EditItem = () => {
           />
         </div>
 
-        {/* Type & Category */}
+        {/* Category */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="text-sm font-medium text-gray-700 mb-2 block">Type *</label>
@@ -147,7 +147,7 @@ const EditItem = () => {
           </div>
         </div>
 
-        {/* Location & Date */}
+        {/* Location  */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="text-sm font-medium text-gray-700 mb-2 block">Location *</label>

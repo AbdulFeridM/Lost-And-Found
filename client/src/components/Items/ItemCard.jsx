@@ -38,7 +38,7 @@ const ItemCard = ({ item }) => {
   return (
     <div
       onClick={handleNavigate}
-      className="bg-white rounded-xl shadow-sm px-4 py-2  hover:shadow-md transition-all duration-300 overflow-hidden w-full max-w-sm cursor-pointer"
+      className="bg-white rounded-xl shadow-sm  px-4 py-2  hover:shadow-md transition-all duration-300 overflow-hidden w-full max-w-sm cursor-pointer"
     >
       <img
         src={item.images?.[0] || '/place-holder.jpg'}
